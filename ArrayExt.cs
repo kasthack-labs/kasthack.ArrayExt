@@ -8,7 +8,7 @@
  */
 using System;
 namespace kasthack.Tools {
-  public static class ArrayExt {
+	public static class ArrayExt {
 		/// <summary>
 		/// Binary search with custom comparison
 		/// </summary>
@@ -70,7 +70,7 @@ namespace kasthack.Tools {
 		/// <param name="array">Array</param>
 		/// <param name="r">Your instanse of RNG</param>
 		public static void Shuffle<T>( this T[] array, Random r) {
-			Shuffle(array, r, array.Length - 1, 0);
+			Shuffle(array, r, 0, array.Length - 1);
 		}
 		/// <summary>
 		/// Shuffle array between two indexes
@@ -83,7 +83,7 @@ namespace kasthack.Tools {
 			int cnt = max;
 			int _cnt = cnt + 1;
 			T o;
-			int b = r.Next();
+			int b = r.Next(min,_cnt);
 			for ( int a = min; a < cnt; ) {
 				o = array[a];
 				array[a] = array[b];
