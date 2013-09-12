@@ -8,7 +8,7 @@
  */
 using System;
 namespace kasthack.Tools {
-	public static class ArrayExt {
+		public static class ArrayExt {
 		const int SEQUENTIAL_THRESHOLD = 8192;
 	
 		/// <summary>
@@ -61,7 +61,7 @@ namespace kasthack.Tools {
 		public static void PSortRange<T>(T[] array, Comparison<T> comparison, int left, int right){
 			if (right > left) {
 				if (right - left < SEQUENTIAL_THRESHOLD)
-					SortRange(array, left, right);
+					SortRange(array,comparison, left, right);
 				else
 				{
 					int pivot = Partition(array, comparison, left, right);
@@ -135,8 +135,8 @@ namespace kasthack.Tools {
 		/// Shuffle elements in array
 		/// </summary>
 		/// <param name="array">Array</param>
-		public static void Shuffle<T>(this this T[] array ) {
-			Shuffle(array, null, array.Length - 1, 0);
+		public static void Shuffle<T>(this T[] array ) {
+			Shuffle(array, 0, array.Length - 1,  null);
 		}
 		/// <summary>
 		/// Shuffle elements in array
