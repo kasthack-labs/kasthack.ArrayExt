@@ -9,7 +9,80 @@
 using System;
 namespace kasthack.Tools {
 	public static class ArrayExt {
-		
+		const int SEQUENTIAL_THRESHOLD = 8192;
+	
+		/// <summary>
+		/// QuickSort array
+		/// <param name="array">Array</param>
+		/// </summary>
+		public static void Sort<T>(this T [] array) where T : IComparable<T>{
+			SortRange(array, (a,b)=>a.CompareTo(b), 0, array.Length - 1); }
+		/// <summary>
+		/// QuickSort array with custom comparison
+		/// <param name="array">Array</param>
+		/// <param name="comparison">Comparison delegate. Example: (a,b)=>String.Compare(a,b)</param>
+		/// </summary>
+		public static void Sort<T>(this T [] array, Comparison<T> comparison) {
+			SortRange(array, comparison, 0, array.Length - 1); }
+		/// <summary>
+		/// Parallel QuickSort array
+		/// <param name="array">Array</param>
+		/// </summary>
+		public static void PSort<T>(this T[] array) where T : IComparable<T>{
+			PSortRange(array, (a,b)=>a.CompareTo(b), 0, array.Length - 1); }
+		/// <summary>
+		/// Parallel QuickSort range with custom comparison
+		/// <param name="array">Array</param>
+		/// <param name="comparison">Comparison delegate. Example: (a,b)=>String.Compare(a,b)</param>
+		/// </summary>
+		public static void PSort<T>(this T[] array, Comparison<T> comparison){
+			PSortRange(array, comparison, 0, array.Length - 1); }
+		/// <summary>
+		/// QuickSort range
+		/// <param name="array">Array</param>
+		/// <param name="comparison">Comparison delegate. Example: (a,b)=>String.Compare(a,b)</param>
+		/// <param name="left">Left</param>
+		/// <param name="right">Right</param>
+		/// </summary>
+		public static void SortRange<T>(T[] array, Comparison<T> comparison, int left, int right){
+			if (right > left) {
+				int pivot = Partition(array, comparison, left, right);
+				SortRange(array, comparison, left, pivot - 1);
+				SortRange(array, comparison, pivot + 1, right);
+			}
+		}
+		/// <summary>
+		/// Parallel QuickSort range
+		/// <param name="array">Array</param>
+		/// <param name="comparison">Comparison delegate. Example: (a,b)=>String.Compare(a,b)</param>
+		/// <param name="left">Left</param>
+		/// <param name="right">Right</param>
+		/// </summary>
+		public static void PSortRange<T>(T[] array, Comparison<T> comparison, int left, int right){
+			if (right > left) {
+				if (right - left < SEQUENTIAL_THRESHOLD)
+					SortRange(array, left, right);
+				else
+				{
+					int pivot = Partition(array, comparison, left, right);
+					Parallel.Invoke(new Action[] {
+						()=>PSortRange(array, comparison, left, pivot - 1),
+						()=>PSortRange(array, comparison, pivot + 1, right)
+					});
+				}
+			}
+		}
+		private static int Partition<T>(T[] array, Comparison<T> comparison, int low, int high){
+			int pivotPos = (high + low) / 2;
+			T pivot = array[pivotPos];
+			Swap(array, low, pivotPos);
+			int left = low;
+			for (int i = low + 1; i <= high; i++)
+				if (comparison(array[i],pivot) < 0)
+					Swap(array, i, ++left);
+			Swap(array, low, left);
+			return left;
+		}
 		/// <summary>
 		/// Binary search with custom comparison
 		/// </summary>
