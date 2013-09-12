@@ -9,6 +9,7 @@
 using System;
 namespace kasthack.Tools {
 	public static class ArrayExt {
+		
 		/// <summary>
 		/// Binary search with custom comparison
 		/// </summary>
@@ -16,7 +17,7 @@ namespace kasthack.Tools {
 		/// <param name="value">Value to search</param>
 		/// <param name="comparison">Comparison delegate. Example: (a,b)=>String.Compare(a,b)</param>
 		/// <returns>Index of value or ~index of nearest if not found</returns>
-		public static int BinarySearch<T>( T[] array, T value, Comparison<T> comparison ) {
+		public static int BinarySearch<T>(this T[] array, T value, Comparison<T> comparison ) {
 			return BinarySearch<T>(array, value, comparison, 0, array.Length);
 		}
 		/// <summary>
@@ -28,7 +29,7 @@ namespace kasthack.Tools {
 		/// <param name="min">Min index(inclusive)</param>
 		/// <param name="max">Max index(exclusive)</param>
 		/// <returns>Index of value or ~index of nearest if not found</returns>
-		public static int BinarySearch<T>( T[] array, T value, Comparison<T> comparison, int min, int max ) {
+		public static int BinarySearch<T>(this T[] array, T value, Comparison<T> comparison, int min, int max ) {
 			if ( array == null )
 				throw new ArgumentNullException("array");
 			if ( array.Rank > 1 )
@@ -61,16 +62,16 @@ namespace kasthack.Tools {
 		/// Shuffle elements in array
 		/// </summary>
 		/// <param name="array">Array</param>
-		public static void Shuffle<T>( this T[] array ) {
-			Shuffle(array, new Random(), array.Length - 1, 0);
+		public static void Shuffle<T>(this this T[] array ) {
+			Shuffle(array, null, array.Length - 1, 0);
 		}
 		/// <summary>
 		/// Shuffle elements in array
 		/// </summary>
 		/// <param name="array">Array</param>
 		/// <param name="r">Your instanse of RNG</param>
-		public static void Shuffle<T>( this T[] array, Random r) {
-			Shuffle(array, r, 0, array.Length - 1);
+		public static void Shuffle<T>( this T[] array, Random r=null) {
+			Shuffle(array, 0, array.Length - 1, r);
 		}
 		/// <summary>
 		/// Shuffle array between two indexes
@@ -79,12 +80,14 @@ namespace kasthack.Tools {
 		/// <param name="r">Your instanse of RNG</param>
 		/// <param name="min">Min index(inclusive)</param>
 		/// <param name="max">Min index(inclusive)</param>
-		public static void Shuffle<T>( this T[] array, Random r, int min, int max ) {
+		public static void Shuffle<T>( this T[] array, int min, int max,Random r=null ) {
+			r=r??new Random();
 			int cnt = max;
 			int _cnt = cnt + 1;
 			T o;
 			int b = r.Next(min,_cnt);
 			for ( int a = min; a < cnt; ) {
+				//swap inlined
 				o = array[a];
 				array[a] = array[b];
 				array[b] = o;
@@ -102,5 +105,6 @@ namespace kasthack.Tools {
 			array[a] = array[b];
 			array[b] = o;
 		}
+		
 	}
 }
